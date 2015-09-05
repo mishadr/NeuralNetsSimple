@@ -2,19 +2,19 @@ package main;
 
 public class Example {
 
-	private final float[] in;
-	private final float[] out;
+	private final double[] in;
+	private final double[] out;
 	
-	public Example(float[] in, float[] out) {
+	public Example(double[] in, double[] out) {
 		this.in = in;
 		this.out = out;
 	}
 	
-	public float[] getInput() {
+	public double[] getInput() {
 		return in;
 	}
 	
-	public float[] getOutput() {
+	public double[] getOutput() {
 		return out;
 	}
 }

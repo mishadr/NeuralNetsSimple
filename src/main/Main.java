@@ -8,10 +8,10 @@ public class Main {
 
 	public static void main(String[] args) {
 		List<Example> exampleSet = new LinkedList<>();
-		exampleSet.add(new Example(new float[]{0, 0}, new float[]{0}));
-		exampleSet.add(new Example(new float[]{0, 1}, new float[]{1}));
-		exampleSet.add(new Example(new float[]{1, 0}, new float[]{1}));
-		exampleSet.add(new Example(new float[]{1, 1}, new float[]{1}));
+		exampleSet.add(new Example(new double[]{0, 0}, new double[]{1}));
+		exampleSet.add(new Example(new double[]{0, 1}, new double[]{0}));
+		exampleSet.add(new Example(new double[]{1, 0}, new double[]{0}));
+		exampleSet.add(new Example(new double[]{1, 1}, new double[]{0}));
 		
 		SimpleNeuralNetwork net = new SimpleNeuralNetwork(2, 1);
 		
@@ -20,7 +20,7 @@ public class Main {
 		}
 		System.out.println();
 		
-		net.trainBackpropagation(exampleSet, 40, 10.9f);
+		net.trainBackpropagation(exampleSet, 100, 10.9f);
 		for(Example e: exampleSet) {
 			System.out.print(Arrays.toString(net.compute(e.getInput())));
 		}

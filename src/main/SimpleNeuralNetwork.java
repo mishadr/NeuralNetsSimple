@@ -2,48 +2,98 @@ package main;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class SimpleNeuralNetwork {
 
-	private int nInput;
-	private int nOutput;
-	// size: (input+1) X (output)
-	private float[][] weights;
+	private int nLayers;
+	private int[] layers;
+	// (Nlayers-1) matrices of sizes: (|layer_i| + 1) X |layer_(i+1)|
+	private double[][][] weights;
+	
+	// (Nlayers-1) vectors of sizes: |layer_i|
+	private double[][] activations;
 
-	public SimpleNeuralNetwork(int inputSize, int outputSize) {
-		nInput = inputSize;
-		nOutput = outputSize;
-		weights = new float[nInput + 1][nOutput];
-		for (int i = 0; i < nInput + 1; ++i) {
-			weights[i] = new float[nOutput];
+	public SimpleNeuralNetwork(int ... sizes) {
+		this.nLayers = sizes.length;
+		layers = sizes;
+		weights = new double[nLayers-1][][];
+		activations = new double[nLayers][];
+		activations[0] = new double[layers[0]];
+		for(int l=0;l<nLayers-1;++l) {
+			int in = layers[l]+1;
+			int out = layers[l+1];
+			weights[l] = new double[in][out];
+			for (int i = 0; i < in; ++i) {
+				weights[l][i] = new double[out];
+			}
+			activations[l+1] = new double[out];
 		}
+		
 		initWeights();
+	}
+	
+	private SimpleNeuralNetwork(double[][][] newWeights) {
+		nLayers = newWeights.length + 1;
+		layers = new int[nLayers];
+		weights = new double[nLayers-1][][];
+		activations = new double[nLayers][];
+		activations[0] = new double[layers[0]];
+		for(int l=0;l<nLayers-1;++l) {
+			layers[l] = newWeights[l].length-1;
+			int in = layers[l]+1;
+			int out = newWeights[l][0].length;
+			weights[l] = new double[in][out];
+			for (int i = 0; i < in; ++i) {
+				weights[l][i] = new double[out];
+				for (int j = 0; j < out; ++j) {
+					weights[l][i][j] = newWeights[l][i][j];
+				}
+			}
+			activations[l+1] = new double[out];
+		}
+		layers[nLayers-1] = newWeights[nLayers-2][0].length;
 	}
 
 	private void initWeights() {
-		for (int i = 0; i <= nInput; ++i) {
-			for (int j = 0; j < nOutput; ++j) {
-				weights[i][j] = (float) Math.random()-0.5f;
+		for (int l = 0; l < nLayers - 1; ++l) {
+			for (int i = 0; i < weights[l].length; ++i) {
+				for (int j = 0; j < weights[l][i].length; ++j) {
+					// XXX seed used
+					weights[l][i][j] = (double) (Math.random()) - 0.5f;
+				}
 			}
 		}
 	}
 
-	public float[] compute(float[] input) {
-		float[] res = new float[nOutput];
-
-		for (int i = 0; i < nInput; ++i) {
-			for (int j = 0; j < nOutput; ++j) {
-				res[j] += weights[i][j]*input[i];
+	/**
+	 * Forward propagation of the input. Activations at each layer will be
+	 * updated.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public double[] compute(double[] input) {
+		activations[0] = Arrays.copyOf(input, input.length);
+		for (int l = 0; l < nLayers - 1; ++l) {
+			int in = activations[l].length;
+			int out = activations[l + 1].length;
+			// computing next activations vector by applying weights to current
+			// activations
+			Arrays.fill(activations[l + 1], 0);
+			for (int i = 0; i < in; ++i) {
+				for (int j = 0; j < out; ++j) {
+					activations[l + 1][j] += weights[l][i][j]
+							* activations[l][i];
+				}
+			}
+			// adding extra 1 and applying sigma function
+			for (int j = 0; j < out; ++j) {
+				activations[l + 1][j] = sigma(weights[l][in][j]
+						+ activations[l + 1][j]);
 			}
 		}
-		for (int j = 0; j < nOutput; ++j) {
-			res[j] = sigma(weights[nInput][j] + res[j]);
-		}
-
-//		for (int i = 0; i < nOutput; ++i) {
-//			res[i] = sigma(scalar(input, weights[i]));
-//		}
-		return res;
+		return activations[nLayers - 1];
 	}
 
 	/**
@@ -52,25 +102,36 @@ public class SimpleNeuralNetwork {
 	 * @param x
 	 * @return
 	 */
-	private float sigma(float x) {
-		return (float) (1.0 / (1.0 + Math.exp(-x)));
+	private static double sigma(double x) {
+		return (double) (1.0 / (1.0 + Math.exp(-x)));
 	}
 
 	/**
-	 * Scalar product of input vector and weights vector of the same size or 1
-	 * more (for additional 1)
+	 * Quadratic cost function value computed for a single example.
 	 * 
-	 * @param x
-	 * @param w
+	 * @param correct
+	 * @param output
+	 * @return
 	 */
-	private float scalar(float[] x, float[] w) {
-		float res = 0;
-		int i = 0;
-		for (; i < x.length; ++i) {
-			res += x[i] * w[i];
+	private static double cost(double[] correct, double[] output) {
+		double res = 0;
+		for (int i = 0; i < correct.length; ++i) {
+			res += (correct[i] - output[i]) * (correct[i] - output[i]);
 		}
-		if (w.length > i) {
-			res += w[i];
+		return res / 2;
+	}
+
+	/**
+	 * Vector of derivatives by outputs of quadratic cost function.
+	 * 
+	 * @param correct
+	 * @param output
+	 * @return
+	 */
+	private static double[] costDerivative(double[] correct, double[] output) {
+		double[] res = new double[correct.length];
+		for (int i = 0; i < correct.length; ++i) {
+			res[i] = (output[i] - correct[i]);
 		}
 		return res;
 	}
@@ -82,52 +143,77 @@ public class SimpleNeuralNetwork {
 	 * @param n - steps number
 	 * @param eta - learning rate
 	 */
-	public void trainBackpropagation(List<Example> exampleSet, int n, float eta) {
+	public void trainBackpropagation(List<Example> exampleSet, int n, double eta) {
 		for(int step=0; step<n; ++step) {
-			float cost = 0;
-			for(Example ex: exampleSet) {
-				float[] input = ex.getInput();
-				// forward propagation of the input
-				float[] answer = compute(input);
-				float[] correct = ex.getOutput();
-				// computing deltas
-				// for output layer
-				float[] delta = new float[nOutput];
-				for (int k = 0; k < nOutput; ++k) {
-					delta[k] = answer[k]*(1-answer[k])*(answer[k]-correct[k]);
+			double cost = 0;
+			for (Example ex : exampleSet) {
+//				SimpleNeuralNetwork sameNet = clone();
+				
+				// forward propagating, which inits activations at each layer
+				compute(ex.getInput());
+				double[] correct = ex.getOutput();
+				// computing deltas for output layer
+				int l = nLayers - 1;
+				int out = layers[l];
+				double[] delta = new double[out];
+				double[] dJ_do = costDerivative(correct, activations[l]);
+				for (int j = 0; j < out; ++j) {
+					delta[j] = activations[l][j] * (1 - activations[l][j]) * dJ_do[j];
 				}
-				// for other layers
-	//			float[] c = new float[nOutput];
-				for (int k = 0; k < nInput; ++k) {
-	//				c[k] = answer[k] *(1-answer[k])*scalar(b, weights[k]);
-					// updating weights
-					for(int i=0; i<nOutput; ++i) {
-						weights[k][i] += -eta*delta[i]*input[k];
+				// updating weights and computing deltas for other layers
+				for (; l > 0; --l) {
+					int in = layers[l - 1];
+					out = layers[l];
+					// deltas at layer (l-1)
+					double[] nextDelta = new double[in];
+					for (int j = 0; j < in; ++j) {
+						double sum = 0;
+						for (int k = 0; k < out; ++k) {
+							sum += weights[l - 1][j][k] * delta[k];
+						}
+						nextDelta[j] = activations[l - 1][j]
+								* (1 - activations[l - 1][j]) * sum;
 					}
+					// updating weights
+					for (int j = 0; j < in; ++j) {
+						for (int i = 0; i < out; ++i) {
+							/*
+							// gradient checking
+							double epsilon = 0.0001f;
+							SimpleNeuralNetwork netMinus = sameNet.clone();
+							netMinus.weights[l - 1][j][i] -= epsilon;
+							netMinus.compute(ex.getInput());
+							double costMinus = cost(correct,
+									netMinus.activations[nLayers - 1]);
+							SimpleNeuralNetwork netPlus = sameNet.clone();
+							netPlus.weights[l - 1][j][i] += epsilon;
+							netPlus.compute(ex.getInput());
+							double costPlus = cost(correct,
+									netPlus.activations[nLayers - 1]);
+							double der_delta = -eta*(costPlus - costMinus) / 2 / epsilon;
+							double bp_delta = -eta * delta[i] * activations[l - 1][j];
+							System.out.print(der_delta);
+							System.out.println("  " + bp_delta);
+							weights[l - 1][j][i] += der_delta;
+							*/
+							weights[l - 1][j][i] += -eta * delta[i]
+									* activations[l - 1][j];
+						}
+					}
+					for (int i = 0; i < out; ++i) {
+						weights[l - 1][in][i] += -eta * delta[i] * 1;
+					}
+					delta = nextDelta;
 				}
-				for(int i=0; i<nOutput; ++i) {
-					weights[nInput][i] += -eta*delta[i]*1;
-				}
-				cost += cost(correct, answer);
+				cost += cost(correct, activations[nLayers-1]);
 			}
 			// print weights
 			System.out.println(Arrays.deepToString(weights) + ", \tError = " + cost);
 		}
 	}
 
-	/**
-	 * Quadratic cost function value computed for a single example.
-	 * 
-	 * @param correct
-	 * @param answer
-	 * @return
-	 */
-	private float cost(float[] correct, float[] answer) {
-		float res = 0;
-		for (int i=0; i<correct.length; ++i) {
-			res += (correct[i] - answer[i])*(correct[i] - answer[i]);
-		}
-		return res;
+	public SimpleNeuralNetwork clone() {
+		return new SimpleNeuralNetwork(weights);
 	}
 
 }
