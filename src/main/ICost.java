@@ -60,9 +60,10 @@ public interface ICost {
 	};
 
 	/**
-	 * Cross-entropy error function with natural logarithms. NOTE: when correct
-	 * net's outputs are not only 0's and 1's this error does not converge to
-	 * zero. Use lower learning rate than that with square error.
+	 * Cross-entropy error function with natural logarithms. Use lower learning
+	 * rate than that with square error. NOTE: when correct net's outputs are
+	 * not only 0's and 1's (like in classification task) this error converges
+	 * but not to zero.
 	 */
 	public static final ICost CROSS_ENTROPY = new ICost() {
 

@@ -1,5 +1,11 @@
 package main;
 
+/**
+ * Pair of 2 vectors (input, output).
+ * 
+ * @author misha
+ *
+ */
 public class Example {
 
 	private final double[] in;

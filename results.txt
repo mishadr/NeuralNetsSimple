@@ -1,0 +1,50 @@
+Results of SimpleNeuralNetwork at MNIST dataset.
+
+Using 450 for train, 50 for validation, 100 for test:
+  NN [784, 30, 10]; LR: 0,000100; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 10,000 %
+  NN [784, 30, 10]; LR: 0,000300; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 23,000 %
+  NN [784, 30, 10]; LR: 0,001000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 15,000 %
+  NN [784, 30, 10]; LR: 0,003000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 27,000 %
+  NN [784, 30, 10]; LR: 0,010000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 48,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 56,000 %
+  NN [784, 30, 10]; LR: 0,100000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 47,000 %
+  NN [784, 30, 10]; LR: 0,300000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 25,000 %
+  NN [784, 30, 10]; LR: 1,000000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 19,000 %
+  
+Using 450 for train, 50 for validation, 100 for test:
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 1.	 acc = 22,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 3.	 acc = 32,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 52,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 50.	 acc = 39,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 100.	 acc = 22,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 500.	 acc = 9,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 1000.	 acc = 13,000 %
+
+
+Using 450 for train, 50 for validation, 100 for test:
+  NN [784, 10, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 31,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 30.	 acc = 47,000 %
+  NN [784, 50, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 50.	 acc = 42,000 %
+  NN [784, 70, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 70.	 acc = 36,000 %
+  NN [784, 100, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 100.	 acc = 38,000 %
+  NN [784, 200, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 200.	 acc = 25,000 %
+  NN [784, 300, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 300.	 acc = 28,000 %
+  NN [784, 500, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 500.	 acc = 8,000 %
+  
+Using 450 for train, 50 for validation, 100 for test:
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 59,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,200; epochs: 30; batch size: 10.	 acc = 49,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,500; epochs: 30; batch size: 10.	 acc = 39,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,700; epochs: 30; batch size: 10.	 acc = 37,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,900; epochs: 30; batch size: 10.	 acc = 25,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,950; epochs: 30; batch size: 10.	 acc = 19,000 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,990; epochs: 30; batch size: 10.	 acc = 15,000 %
+  
+Using 4950 for train, 100 for validation, 500 for test:
+  NN [784, 10, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 53,600 %
+  NN [784, 30, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 66,800 %
+  NN [784, 100, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 79,600 %
+  NN [784, 300, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 82,600 %
+
+Using 450 for train, 1000 for validation, 0 for test:
+  NN [784, 1000, 10]; LR: 0,030000; momentum: 0,000; epochs: 30; batch size: 10.	 acc = 76,300 % at 26
